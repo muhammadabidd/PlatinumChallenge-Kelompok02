@@ -1,8 +1,8 @@
 
-from flask import Flask, jsonify
-from flask import request
+from flask import Flask, jsonify, render_template, request
 from flasgger import Swagger, LazyString, LazyJSONEncoder
 from flasgger import swag_from
+import os
 
 import pickle, re
 import numpy as np
@@ -38,11 +38,15 @@ swagger = Swagger(app, template=swagger_template,
                   config=swagger_config)
 
 
+
+# Tokenizing (?)
 max_features = 100000
 tokenizer = Tokenizer(num_words=max_features, split=' ', lower=True)
 
 sentiment = ['negative', 'neutral', 'positive']
 
+
+# Cleansing (?)
 def cleansing(sent):
 
     string = sent.lower()
@@ -52,10 +56,8 @@ def cleansing(sent):
 
 
 
-
-
-#Connecting NN
-@swag_from("docs/nn.yml", methods=['POST'])
+#Text NN
+@swag_from("docs/Text.yml", methods=['POST'])
 @app.route('/neural_network_text', methods=['POST'])
 def neural_network_text():
 
@@ -89,8 +91,8 @@ def neural_network_text():
     response_data = jsonify(json_response)
     return response_data
 
-#Connecting LSTM
-@swag_from("docs/lstm.yml", methods=['POST'])
+#Text LSTM
+@swag_from("docs/Text.yml", methods=['POST'])
 @app.route('/lstm_text', methods=['POST'])
 def lstm_text():
 
@@ -124,8 +126,44 @@ def lstm_text():
     response_data = jsonify(json_response)
     return response_data
 
+#File Neural Network
+@swag_from("docs/file_Upload.yml", methods = ['POST'])
+@app.route("/neural_network_file", methods=["POST"])
+def neural_network_file():
+    file = request.files['file'] #the Function is not designet yet
+
+    
+    json_response = {
+        'status_code' : 200,
+        'description' : "File yang sudah diproses",
+        'data' : "Its Functioned",
+    }
+
+    response_data = jsonify(json_response)
+    return response_data
+
+#File Neural Network
+@swag_from("docs/file_Upload.yml", methods = ['POST'])
+@app.route("/lstm_file", methods=["POST"])
+def lstm_file():
+    file = request.files['file'] #the Function is not designet yet
+
+    
+    json_response = {
+        'status_code' : 200,
+        'description' : "File yang sudah diproses",
+        'data' : "Its Functioned",
+    }
+
+    response_data = jsonify(json_response)
+    return response_data
+
+
+
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 
 

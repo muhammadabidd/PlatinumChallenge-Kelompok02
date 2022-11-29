@@ -50,39 +50,37 @@ def cleansing(sent):
     string = re.sub(r'[^a-zA-z0-9]', '', string)
     return string
 
-#NN
-file = open("",'rb')
-feature_file_from_rnn = pickle.load(file)
-file.close()
 
-model_file_from_rnn = load_model('')
 
-#LSTM
-file = open("",'rb')
-feature_file_from_lstm = pickle.load(file)
-file.close()
 
-model_file_from_lstm = load_model('')
 
 #Connecting NN
-@swag_from("", methods=['POST'])
-@app.route('', methods=['POST'])
-def rnn():
+@swag_from("docs/nn.yml", methods=['POST'])
+@app.route('/neural_network_text', methods=['POST'])
+def neural_network_text():
+
+    # <<Start of Making NN Model>>
+    file = open("model_of_nn/model.p",'rb')
+    feature_file_from_nn = pickle.load(file)
+    file.close()
+
+    model_file_from_nn = load_model('')
+    # <<End of Loading NN Model>>
 
     original_text = request.form.get('text')
 
     text = [cleansing(original_text)]
 
     feature = tokenizer.texts_to_sequences(text)
-    feature = pad_sequences(feature, maxlen=feature_file_from_rnn.shape[1])
+    feature = pad_sequences(feature, maxlen=feature_file_from_nn.shape[1])
 
-    prediction = model_file_from_rnn.predict(feature)
+    prediction = model_file_from_nn.predict(feature)
     get_sentiment = sentiment[np.argmax(prediction[0])]
 
 
     json_response = {
         'status_code': 200,
-        'description': "Result of Sentiment Analysis using RNN",
+        'description': "Result of Sentiment Analysis using NN",
         'data': {
             'text': original_text,
             'sentiment': get_sentiment
@@ -92,9 +90,17 @@ def rnn():
     return response_data
 
 #Connecting LSTM
-@swag_from("", methods=['POST'])
-@app.route('', methods=['POST'])
-def lstm():
+@swag_from("docs/lstm.yml", methods=['POST'])
+@app.route('/lstm_text', methods=['POST'])
+def lstm_text():
+
+    #Start of Loading LSTM Model
+    file = open("",'rb')
+    feature_file_from_lstm = pickle.load(file)
+    file.close()
+
+    model_file_from_lstm = load_model('')
+    #End of Loading LSTM Model
 
     original_text = request.form.get('text')
 

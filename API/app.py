@@ -50,21 +50,21 @@ def cleansing(sent):
     string = re.sub(r'[^a-zA-z0-9]', '', string)
     return string
 
-#rnn
+#NN
 file = open("",'rb')
 feature_file_from_rnn = pickle.load(file)
 file.close()
 
 model_file_from_rnn = load_model('')
 
-#lstm
+#LSTM
 file = open("",'rb')
 feature_file_from_lstm = pickle.load(file)
 file.close()
 
 model_file_from_lstm = load_model('')
 
-#rnn 
+#Connecting NN
 @swag_from("", methods=['POST'])
 @app.route('', methods=['POST'])
 def rnn():
@@ -91,7 +91,7 @@ def rnn():
     response_data = jsonify(json_response)
     return response_data
 
-#lstm
+#Connecting LSTM
 @swag_from("", methods=['POST'])
 @app.route('', methods=['POST'])
 def lstm():

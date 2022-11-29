@@ -1,0 +1,49 @@
+﻿
+**********************
+Command start time: 20221119210734
+**********************
+PS>. 'C:\Users\Dida\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1'
+
+**********************
+Command start time: 20221119210859
+**********************
+PS C:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02> pip install sklearn
+Collecting sklearn
+  Downloading sklearn-0.0.post1.tar.gz (3.6 kB)
+  Preparing metadata (setup.py) ... done
+Using legacy 'setup.py install' for sklearn, since package 'wheel' is not installed.
+Installing collected packages: sklearn
+  Running setup.py install for sklearn ... done
+Successfully installed sklearn-0.0.post1
+
+[notice] A new release of pip available: 22.2.2 -> 22.3.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+
+**********************
+Command start time: 20221119211045
+**********************
+PS C:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02> -m pip install --upgrade pip
+-m : The term '-m' is not recognized as the name of a cmdlet, function, script
+file, or operable program. Check the spelling of the name, or if a path was inc
+luded, verify that the path is correct and try again.
+At line:1 char:1
++ -m pip install --upgrade pip
++ ~~
+    + CategoryInfo          : ObjectNotFound: (-m:String) [], CommandNotFoundEx
+ception
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+-m : The term '-m' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and
+ try again.
+At line:1 char:1
++ -m pip install --upgrade pip
++ ~~
+    + CategoryInfo          : ObjectNotFound: (-m:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+
+**********************
+Command start time: 20221119211405
+**********************
+PS C:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02> TerminatingError(TabExpansion2): "Cannot bind argument to parameter 'inputScript' because it is an empty string."
+>> pip install -U scikit-learn scipy matplotlib

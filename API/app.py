@@ -62,11 +62,11 @@ def cleansing(sent):
 def neural_network_text():
 
     # <<Start of Making NN Model>>
-    file = open("model_of_nn/model.p",'rb')
+    file = open("API/resources_of_nn/feature.p",'rb')
     feature_file_from_nn = pickle.load(file)
     file.close()
 
-    model_file_from_nn = load_model('')
+    model_file_from_nn = load_model('API/model_of_nn/model.h5')
     # <<End of Loading NN Model>>
 
     original_text = request.form.get('text')
@@ -97,11 +97,11 @@ def neural_network_text():
 def lstm_text():
 
     #Start of Loading LSTM Model
-    file = open("",'rb')
+    file = open("API/resources_of_lstm/x_pad_sequences.pickle",'rb')
     feature_file_from_lstm = pickle.load(file)
     file.close()
 
-    model_file_from_lstm = load_model('')
+    model_file_from_lstm = load_model('API/model_of_lstm/model.h5')
     #End of Loading LSTM Model
 
     original_text = request.form.get('text')
@@ -142,7 +142,7 @@ def neural_network_file():
     response_data = jsonify(json_response)
     return response_data
 
-#File Neural Network
+#File LSTM
 @swag_from("docs/file_Upload.yml", methods = ['POST'])
 @app.route("/lstm_file", methods=["POST"])
 def lstm_file():

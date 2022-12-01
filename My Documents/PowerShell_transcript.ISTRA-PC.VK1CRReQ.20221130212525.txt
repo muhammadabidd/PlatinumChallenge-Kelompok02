@@ -1,0 +1,37 @@
+﻿
+**********************
+Command start time: 20221130212525
+**********************
+PS>. 'C:\Users\Dida\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1'
+
+**********************
+Command start time: 20221130212525
+**********************
+PS C:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02>  & 'C:\Users\Dida\AppData\Local\Programs\Python\Python310\python.exe' 'c:\Users\Dida\.vscode\extensions\ms-python.python-2022.18.2\pythonFiles\lib\python\debugpy\adapter/../..\debugpy\launcher' '7375' '--' '-m' 'flask' 'run' '--no-debugger' '--no-reload' 
+Usage: python -m flask run [OPTIONS]
+Try 'python -m flask run --help' for help.
+
+Error: Could not import 'app'.
+
+**********************
+Command start time: 20221130212645
+**********************
+PS C:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02> app.py
+app.py : The term 'app.py' is not recognized as the name of a cmdlet, function,
+ script file, or operable program. Check the spelling of the name, or if a path
+ was included, verify that the path is correct and try again.
+At line:1 char:1
++ app.py
++ ~~~~~~
+    + CategoryInfo          : ObjectNotFound: (app.py:String) [], CommandNotFou
+ndException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+app.py : The term 'app.py' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path
+was included, verify that the path is correct and try again.
+At line:1 char:1
++ app.py
++ ~~~~~~
+    + CategoryInfo          : ObjectNotFound: (app.py:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+

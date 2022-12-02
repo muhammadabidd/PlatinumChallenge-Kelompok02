@@ -1,0 +1,58 @@
+﻿
+**********************
+Command start time: 20221203053334
+**********************
+PS C:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02> & C:/Users/Dida/AppData/Local/Programs/Python/Python310/python.exe c:/Users/Dida/Documents/GitHub/PlatinumChallenge-Kelompok02/API/app.py
+c:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02\API\app.py:15: DeprecationWarning: 'app.json_encoder' is deprecated and will be removed in Flask 2.3
+. Customize 'app.json_provider_class' or 'app.json' instead.
+  app.json_encoder = LazyJSONEncoder
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+ * Restarting with stat
+c:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02\API\app.py:15: DeprecationWarning: 'app.json_encoder' is deprecated and will be removed in Flask 2.3
+. Customize 'app.json_provider_class' or 'app.json' instead.
+  app.json_encoder = LazyJSONEncoder
+ * Debugger is active!
+ * Debugger PIN: 145-926-207
+127.0.0.1 - - [03/Dec/2022 05:33:47] "GET /docs/ HTTP/1.1" 200 -
+127.0.0.1 - - [03/Dec/2022 05:33:47] "GET /flasgger_static/swagger-ui-bundle.js HTTP/1.1" 304 -
+127.0.0.1 - - [03/Dec/2022 05:33:47] "GET /flasgger_static/swagger-ui.css HTTP/1.1" 304 -
+127.0.0.1 - - [03/Dec/2022 05:33:47] "GET /flasgger_static/swagger-ui-standalone-preset.js HTTP/1.1" 304 -
+127.0.0.1 - - [03/Dec/2022 05:33:47] "GET /flasgger_static/lib/jquery.min.js HTTP/1.1" 304 -
+127.0.0.1 - - [03/Dec/2022 05:33:47] "GET /flasgger_static/favicon-32x32.png HTTP/1.1" 304 -
+127.0.0.1 - - [03/Dec/2022 05:33:47] "GET /docs.json HTTP/1.1" 200 -
+127.0.0.1 - - [03/Dec/2022 05:34:03] "POST /neural_network_text HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\flask\app.py", line 2548, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\flask\app.py", line 2528, in wsgi_app
+    response = self.handle_exception(e)
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "c:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02\API\app.py", line 79, in neural_network_text
+    prediction = model_file_from_nn.predict(text)
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\sklearn\neural_network\_multilayer_perceptron.py", line 1176, in predict
+    y_pred = self._forward_pass_fast(X)
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\sklearn\neural_network\_multilayer_perceptron.py", line 160, in _forward_pass_fa
+st
+    X = self._validate_data(X, accept_sparse=["csr", "csc"], reset=False)
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\sklearn\base.py", line 600, in _validate_data
+    self._check_n_features(X, reset=reset)
+  File "C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\sklearn\base.py", line 400, in _check_n_features
+    raise ValueError(
+ValueError: X has 1 features, but MLPClassifier is expecting 10057 features as input.
+ * Detected change in 'c:\\Users\\Dida\\Documents\\GitHub\\PlatinumChallenge-Kelompok02\\API\\app.py', reloading
+ * Restarting with stat
+Traceback (most recent call last):
+  File "c:\Users\Dida\Documents\GitHub\PlatinumChallenge-Kelompok02\API\app.py", line 3, in <module>
+    from flasgger import Swagger, LazyString, LazyJSONEncoder, make_response, swag_from
+ImportError: cannot import name 'make_response' from 'flasgger' (C:\Users\Dida\AppData\Local\Programs\Python\Python310\lib\site-packages\flasgger\__init__.py)

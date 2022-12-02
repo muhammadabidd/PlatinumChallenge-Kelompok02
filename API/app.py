@@ -1,7 +1,6 @@
 
 from flask import Flask, jsonify, render_template, request
-from flasgger import Swagger, LazyString, LazyJSONEncoder
-from flasgger import swag_from
+from flasgger import Swagger, LazyString, LazyJSONEncoder, make_response, swag_from
 import os
 
 import pickle, re
@@ -159,6 +158,29 @@ def lstm_file():
     return response_data
 
 
+# Error Handling
+@app.errorhandler(400)
+def handle_400_error(_error):
+    "Return a http 400 error to client"
+    return make_response(jsonify({'error': 'Misunderstood'}), 400)
+
+
+@app.errorhandler(401)
+def handle_401_error(_error):
+    "Return a http 401 error to client"
+    return make_response(jsonify({'error': 'Unauthorised'}), 401)
+
+
+@app.errorhandler(404)
+def handle_404_error(_error):
+    "Return a http 404 error to client"
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
+@app.errorhandler(500)
+def handle_500_error(_error):
+    "Return a http 500 error to client"
+    return make_response(jsonify({'error': 'Server error'}), 500)
 
 
 

@@ -137,7 +137,7 @@ def lstm_text():
 @swag_from("docs/file_Upload.yml", methods = ['POST'])
 @app.route("/neural_network_file", methods=["POST"])
 def neural_network_file():
-    file = request.files['file'] #the Function is not designet yet
+    file = request.files['file'] #the Function is not designed yet
 
     
     json_response = {

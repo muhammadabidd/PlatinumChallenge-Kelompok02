@@ -182,7 +182,8 @@ def lstm_file():
 
         # <<reading csv file>>
         data = pd.read_csv(filepath, encoding='latin-1')
-        first_column_pre_process = data.iloc[:, 0]
+        print(data)
+        first_column_pre_process = data.iloc[:, 1]
 
         #<<Start of Loading LSTM Model>>
         file = open("API/resources_of_lstm/x_pad_sequences.pickle",'rb')
@@ -197,7 +198,8 @@ def lstm_file():
 
         for text in first_column_pre_process:
             #Cleaning inputted text
-            file_clean = process_text(text)
+            file_clean = [process_text(text)]
+            print('this is gonne be : ', file_clean)
         
             #Feature extraction
             feature = tokenizer.texts_to_sequences(file_clean)
@@ -207,11 +209,12 @@ def lstm_file():
             prediction = model_file_from_lstm.predict(feature)
             get_sentiment = sentiment[np.argmax(prediction[0])]
 
+            print(get_sentiment)
             sentiment_result.append(get_sentiment)
 
 
         new_data_frame = pd.DataFrame(sentiment_result, columns= ['Sentiment'])
-        outputfilepath = f'output/{new_filename}'
+        outputfilepath = f'API/output/{new_filename}'
         new_data_frame.to_csv(outputfilepath)
 
 

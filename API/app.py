@@ -104,7 +104,7 @@ def lstm_text():
     feature_file_from_lstm = pickle.load(file)
     file.close()
 
-    model_file_from_lstm = load_model('API/model_of_lstm/model.h5')
+    model_file_from_lstm = load_model('API/resources_of_lstm/model.h5')
     #<<End of Loading LSTM Model>>
 
     #Getting text input

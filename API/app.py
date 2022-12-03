@@ -175,9 +175,9 @@ def lstm_file():
         new_filename = f'{filename.split(".")[0]}_{time_stamp}.csv'
         
         # <<saving new inputted file>>
-        save_location = os.path.join('input', new_filename)
+        save_location = os.path.join('API/input', new_filename)
         file.save(save_location)
-        filepath = 'input/' + str(new_filename)
+        filepath = 'API/input/' + str(new_filename)
 
 
         # <<reading csv file>>
@@ -191,10 +191,6 @@ def lstm_file():
 
         model_file_from_lstm = load_model('API/resources_of_lstm/model.h5')
         #<<End of Loading LSTM Model>>
-
-
-
-
 
         # <<processing text>>
         sentiment = []

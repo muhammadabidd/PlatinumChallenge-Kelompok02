@@ -2,17 +2,17 @@ import pandas as pd
 import re
 import sqlite3
 
-db = sqlite3.connect('challenge.db')
-mycursor = db.cursor()
-query = "CREATE TABLE IF NOT EXISTS nama_tabel (nama_kolom1 tipe_kolom1, nama_kolom2 tipe_kolom2);"
-mycursor.execute(query)
-db.commit()
+# db = sqlite3.connect('challenge.db')
+# mycursor = db.cursor()
+# query = "CREATE TABLE IF NOT EXISTS nama_tabel (nama_kolom1 tipe_kolom1, nama_kolom2 tipe_kolom2);"
+# mycursor.execute(query)
+# db.commit()
 
-db = sqlite3.connect('challenge.db', check_same_thread=False)
-db.text_factory = bytes
-mycursor = db.cursor()
-q_kamusalay = "select * from kamusalay"
-t_kamusalay = pd.read_sql_query(q_kamusalay, db)
+# db = sqlite3.connect('challenge.db', check_same_thread=False)
+# db.text_factory = bytes
+# mycursor = db.cursor()
+# q_kamusalay = "select * from kamusalay"
+# t_kamusalay = pd.read_sql_query(q_kamusalay, db)
 
 def lowercase(text):
     return text.lower()
@@ -30,10 +30,10 @@ def remove_nonaplhanumeric(text):
     text = re.sub('  +',' ', text) 
     return text
 
-alay_dict_map = dict(zip(t_kamusalay['alay'], t_kamusalay['cleaned'])) #zip menyatukan value dengan index yang sama
-def normalize_alay(text):
-    for word in alay_dict_map:
-        return ' '.join([alay_dict_map[word] if word in alay_dict_map else word for word in text.split(' ')])
+# alay_dict_map = dict(zip(t_kamusalay['alay'], t_kamusalay['cleaned'])) #zip menyatukan value dengan index yang sama
+# def normalize_alay(text):
+#     for word in alay_dict_map:
+#         return ' '.join([alay_dict_map[word] if word in alay_dict_map else word for word in text.split(' ')])
 
 """
 for word in text.split(' '):
@@ -48,7 +48,7 @@ def preprocess(text):
     text = lowercase(text) # 1
     text = remove_unnecessary_char(text) # 2
     text = remove_nonaplhanumeric(text) # 3
-    text = normalize_alay(text) # 4
+    # text = normalize_alay(text) # 4
     return text
 
 
@@ -61,8 +61,8 @@ def process_csv(input_file):
         tweet_clean = preprocess(tweet)
         query_tabel = "insert into tweet (tweet_kotor,tweet_bersih) values (?, ?)"
         val = (tweet, tweet_clean)
-        mycursor.execute(query_tabel, val)
-        db.commit()
+        # mycursor.execute(query_tabel, val)
+        # db.commit()
         print(tweet)
 
 

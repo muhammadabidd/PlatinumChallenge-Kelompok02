@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, render_template, request
 from flasgger import Swagger, LazyString, LazyJSONEncoder, swag_from
 # from flasgger import make_response
+from Data_Cleansing import process_text
 import os
 
 import pickle, re
@@ -47,12 +48,14 @@ sentiment = ['negative', 'neutral', 'positive']
 
 
 # Cleansing (?)
-def cleansing(sent):
+# def cleansing(sent):
 
-    string = sent.lower()
+#     string = sent.lower()
 
-    string = re.sub(r'[^a-zA-z0-9]', '', string)
-    return string
+#     string = re.sub(r'[^a-zA-z0-9]', '', string)
+#     return string
+
+
 
 
 
@@ -71,7 +74,7 @@ def neural_network_text():
 
     original_text = request.form.get('text')
 
-    text = [cleansing(original_text)]
+    text = [process_text(original_text)]
 
     feature = tokenizer.texts_to_sequences(text)
     feature = pad_sequences(feature, maxlen=feature_file_from_nn.shape[1])
@@ -108,7 +111,7 @@ def lstm_text():
     original_text = request.form.get('text')
 
     #Cleaning inputted text
-    text = [cleansing(original_text)]
+    text = [process_text(original_text)]
 
     #Feature extraction
     feature = tokenizer.texts_to_sequences(text)

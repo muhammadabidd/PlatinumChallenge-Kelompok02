@@ -1,6 +1,7 @@
 
 from flask import Flask, jsonify, render_template, request
-from flasgger import Swagger, LazyString, LazyJSONEncoder, make_response, swag_from
+from flasgger import Swagger, LazyString, LazyJSONEncoder, swag_from
+# from flasgger import make_response
 import os
 
 import pickle, re
@@ -95,25 +96,29 @@ def neural_network_text():
 @app.route('/lstm_text', methods=['POST'])
 def lstm_text():
 
-    #Start of Loading LSTM Model
+    #<<Start of Loading LSTM Model>>
     file = open("API/resources_of_lstm/x_pad_sequences.pickle",'rb')
     feature_file_from_lstm = pickle.load(file)
     file.close()
 
     model_file_from_lstm = load_model('API/model_of_lstm/model.h5')
-    #End of Loading LSTM Model
+    #<<End of Loading LSTM Model>>
 
+    #Getting text input
     original_text = request.form.get('text')
 
+    #Cleaning inputted text
     text = [cleansing(original_text)]
 
+    #Feature extraction
     feature = tokenizer.texts_to_sequences(text)
     feature = pad_sequences(feature, maxlen=feature_file_from_lstm.shape[1])
 
+    #predicting
     prediction = model_file_from_lstm.predict(feature)
     get_sentiment = sentiment[np.argmax(prediction[0])]
 
-
+    #Response
     json_response = {
         'status_code': 200,
         'description': "Result of Sentiment Analysis using LSTM",
@@ -158,29 +163,29 @@ def lstm_file():
     return response_data
 
 
-# Error Handling
-@app.errorhandler(400)
-def handle_400_error(_error):
-    "Return a http 400 error to client"
-    return make_response(jsonify({'error': 'Misunderstood'}), 400)
+# # Error Handling
+# @app.errorhandler(400)
+# def handle_400_error(_error):
+#     "Return a http 400 error to client"
+#     return make_response(jsonify({'error': 'Misunderstood'}), 400)
 
 
-@app.errorhandler(401)
-def handle_401_error(_error):
-    "Return a http 401 error to client"
-    return make_response(jsonify({'error': 'Unauthorised'}), 401)
+# @app.errorhandler(401)
+# def handle_401_error(_error):
+#     "Return a http 401 error to client"
+#     return make_response(jsonify({'error': 'Unauthorised'}), 401)
 
 
-@app.errorhandler(404)
-def handle_404_error(_error):
-    "Return a http 404 error to client"
-    return make_response(jsonify({'error': 'Not found'}), 404)
+# @app.errorhandler(404)
+# def handle_404_error(_error):
+#     "Return a http 404 error to client"
+#     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.errorhandler(500)
-def handle_500_error(_error):
-    "Return a http 500 error to client"
-    return make_response(jsonify({'error': 'Server error'}), 500)
+# @app.errorhandler(500)
+# def handle_500_error(_error):
+#     "Return a http 500 error to client"
+#     return make_response(jsonify({'error': 'Server error'}), 500)
 
 
 

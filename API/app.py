@@ -79,7 +79,7 @@ def neural_network_text():
 
     original_text = request.form.get('text')
 
-    text = [process_text(original_text)]
+    text = process_text(original_text)
 
     feature = tokenizer.texts_to_sequences(text)
     feature = pad_sequences(feature, maxlen=feature_file_from_nn.shape[1])
@@ -193,11 +193,11 @@ def lstm_file():
         #<<End of Loading LSTM Model>>
 
         # <<processing text>>
-        sentiment = []
+        sentiment_result = []
 
         for text in first_column_pre_process:
             #Cleaning inputted text
-            file_clean = [process_text(text)]
+            file_clean = process_text(text)
         
             #Feature extraction
             feature = tokenizer.texts_to_sequences(file_clean)
@@ -207,10 +207,10 @@ def lstm_file():
             prediction = model_file_from_lstm.predict(feature)
             get_sentiment = sentiment[np.argmax(prediction[0])]
 
-            sentiment.append(get_sentiment)
+            sentiment_result.append(get_sentiment)
 
 
-        new_data_frame = pd.DataFrame(sentiment, columns= ['Sentiment'])
+        new_data_frame = pd.DataFrame(sentiment_result, columns= ['Sentiment'])
         outputfilepath = f'output/{new_filename}'
         new_data_frame.to_csv(outputfilepath)
 

@@ -1,15 +1,20 @@
 
-from flask import Flask, jsonify, render_template, request
-from flasgger import Swagger, LazyString, LazyJSONEncoder, swag_from
-# from flasgger import make_response
-from Data_Cleansing import process_text
-import os
 
-import pickle, re
-import numpy as np
+import pickle
 from tensorflow.keras.preprocessing.text import Tokenizer
 from keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+import pandas as pd
+import numpy as np
+import os
+import re
+from werkzeug.utils import secure_filename
+from datetime import datetime
+from Data_Cleansing import process_text
+from flask import Flask, jsonify, render_template, request
+from flasgger import Swagger, LazyString, LazyJSONEncoder, swag_from
+# from flasgger import make_response
 
 
 
@@ -159,13 +164,65 @@ def allowed_file(filename):
 @swag_from("docs/file_Upload.yml", methods = ['POST'])
 @app.route("/lstm_file", methods=["POST"])
 def lstm_file():
-    file = request.files['file'] #the Function is not designet yet
+    file = request.files['file'] 
 
-    
+    if file and allowed_file(file.filename):
+
+        # <<making new file from inputted file>>
+        filename = secure_filename(file.filename)
+        time_stamp = (datetime.now().strftime('%d-%m-%Y_%H%M%S'))
+
+        new_filename = f'{filename.split(".")[0]}_{time_stamp}.csv'
+        
+        # <<saving new inputted file>>
+        save_location = os.path.join('input', new_filename)
+        file.save(save_location)
+        filepath = 'input/' + str(new_filename)
+
+
+        # <<reading csv file>>
+        data = pd.read_csv(filepath, encoding='latin-1')
+        first_column_pre_process = data.iloc[:, 0]
+
+        #<<Start of Loading LSTM Model>>
+        file = open("API/resources_of_lstm/x_pad_sequences.pickle",'rb')
+        feature_file_from_lstm = pickle.load(file)
+        file.close()
+
+        model_file_from_lstm = load_model('API/resources_of_lstm/model.h5')
+        #<<End of Loading LSTM Model>>
+
+
+
+
+
+        # <<processing text>>
+        sentiment = []
+
+        for text in first_column_pre_process:
+            #Cleaning inputted text
+            file_clean = [process_text(text)]
+        
+            #Feature extraction
+            feature = tokenizer.texts_to_sequences(file_clean)
+            feature = pad_sequences(feature, maxlen=feature_file_from_lstm.shape[1])
+
+            #predicting
+            prediction = model_file_from_lstm.predict(feature)
+            get_sentiment = sentiment[np.argmax(prediction[0])]
+
+            sentiment.append(get_sentiment)
+
+
+        new_data_frame = pd.DataFrame(sentiment, columns= ['Sentiment'])
+        outputfilepath = f'output/{new_filename}'
+        new_data_frame.to_csv(outputfilepath)
+
+
     json_response = {
         'status_code' : 200,
         'description' : "File yang sudah diproses",
-        'data' : "Its Functioned",
+        'data' : "open this link to download : http://127.0.0.1:5000/download",
     }
 
     response_data = jsonify(json_response)

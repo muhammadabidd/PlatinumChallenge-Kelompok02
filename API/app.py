@@ -149,6 +149,12 @@ def neural_network_file():
     response_data = jsonify(json_response)
     return response_data
 
+#Defining allowed extensions
+allowed_extensions = set(['csv'])
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
 #File LSTM
 @swag_from("docs/file_Upload.yml", methods = ['POST'])
 @app.route("/lstm_file", methods=["POST"])

@@ -1,15 +1,24 @@
 
-from flask import Flask, jsonify, render_template, request
-from flasgger import Swagger, LazyString, LazyJSONEncoder, swag_from
-# from flasgger import make_response
-from Data_Cleansing import process_text
-import os
 
-import pickle, re
-import numpy as np
-from tensorflow.keras.preprocessing.text import Tokenizer
+import pickle
+from keras.preprocessing.text import Tokenizer
 from keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+# from NeuralNetwork import get_centiment_nn
+
+import json
+import pandas as pd
+import numpy as np
+import os
+import re
+from werkzeug.utils import secure_filename
+from datetime import datetime
+from Data_Cleansing import process_text
+from Data_Cleansing import preprocess
+from flask import Flask, jsonify, make_response, render_template, request
+from flasgger import Swagger, LazyString, LazyJSONEncoder, swag_from
+# from flasgger import make_response
 
 
 
@@ -47,42 +56,33 @@ tokenizer = Tokenizer(num_words=max_features, split=' ', lower=True)
 sentiment = ['negative', 'neutral', 'positive']
 
 
-# Cleansing (?)
-# def cleansing(sent):
-
-#     string = sent.lower()
-
-#     string = re.sub(r'[^a-zA-z0-9]', '', string)
-#     return string
-
-
-
-
-
 #Text NN
 @swag_from("docs/Text.yml", methods=['POST'])
 @app.route('/neural_network_text', methods=['POST'])
 def neural_network_text():
 
-    # <<Start of Making NN Model>>
-    file = open("API/resources_of_nn/feature.p",'rb')
-    feature_file_from_nn = pickle.load(file)
+    #<<Start of Loading Neural Network Model and Feature>>
+    #Import model
+    file = open("API/resources_of_nn_countvectorizer/model_countvectorizer_nn.pickle",'rb')
+    model = pickle.load(file)
     file.close()
 
-    model_file_from_nn = load_model('API/model_of_nn/model.h5')
-    # <<End of Loading NN Model>>
+    #Import Feature
+    file = open("API/resources_of_nn_countvectorizer/feature_countvectorizer_nn.pickle",'rb')
+    feature = pickle.load(file)
+    file.close()
+    #<<End of Loading Neural Network Model and Feature>>
+
+    # Processing text
+    def get_centiment_nn(original_text):
+        text = feature.transform([process_text(original_text)])
+        result = model.predict(text)[0]
+        return result
 
     original_text = request.form.get('text')
-
-    text = [process_text(original_text)]
-
-    feature = tokenizer.texts_to_sequences(text)
-    feature = pad_sequences(feature, maxlen=feature_file_from_nn.shape[1])
-
-    prediction = model_file_from_nn.predict(feature)
-    get_sentiment = sentiment[np.argmax(prediction[0])]
-
-
+    get_sentiment = get_centiment_nn(original_text)
+   
+    
     json_response = {
         'status_code': 200,
         'description': "Result of Sentiment Analysis using NN",
@@ -133,62 +133,199 @@ def lstm_text():
     response_data = jsonify(json_response)
     return response_data
 
+#Defining allowed extensions
+allowed_extensions = set(['csv'])
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+
+
 #File Neural Network
 @swag_from("docs/file_Upload.yml", methods = ['POST'])
-@app.route("/neural_network_file", methods=["POST"])
+@app.route("/neural_network_file", methods = ["POST"])
 def neural_network_file():
-    file = request.files['file'] #the Function is not designed yet
+    file = request.files['file'] 
 
+    if file and allowed_file(file.filename):
+
+        # <<making new file from inputted file>>
+        filename = secure_filename(file.filename)
+        time_stamp = (datetime.now().strftime('%d-%m-%Y_%H%M%S'))
+
+        new_filename = f'{filename.split(".")[0]}_{time_stamp}.csv'
+        
+        # <<saving new inputted file>>
+        save_location = os.path.join('API/input', new_filename)
+        file.save(save_location)
+        filepath = 'API/input/' + str(new_filename)
+
+
+        # <<reading csv file>>
+        data = pd.read_csv(filepath, encoding='latin-1')
+        print(data)
+        first_column_pre_process = data.iloc[:, 1]
+
+        #<<Start of Loading Neural Network Model and Feature>>
+        file = open("API/resources_of_nn_countvectorizer/model_countvectorizer_nn.pickle",'rb')
+        model = pickle.load(file)
+        file.close()
+
+        #Import Feature
+        file = open("API/resources_of_nn_countvectorizer/feature_countvectorizer_nn.pickle",'rb')
+        feature = pickle.load(file)
+        file.close()
+        #<<End of Loading Neural Network Model and Feature>>
+
+        # Processing text
+        def get_centiment_nn(original_text):
+            text = feature.transform([process_text(original_text)]) 
+            result = model.predict(text)[0]
+            return str(result)
+
+        sentiment_result = []
+
+        for text in first_column_pre_process:
+            #Cleaning inputted text
+            file_clean = process_text(text)
+            print('ini teksnya : ', file_clean)
+
+            get_sentiment = get_centiment_nn(file_clean)
+            print('ini sentimennya : ', get_sentiment)
+
+            sentiment_result.append(get_sentiment)
     
+            
+        new_data_frame = pd.DataFrame(
+                {'text': first_column_pre_process,
+                'Sentiment': sentiment_result,
+                })
+                
+        outputfilepath = f'API/output/{new_filename}'
+        new_data_frame.to_csv(outputfilepath)
+
+        
+        result = new_data_frame.to_json(orient="index")
+        parsed = json.loads(result)
+        json.dumps(parsed) 
+
+
     json_response = {
         'status_code' : 200,
-        'description' : "File yang sudah diproses",
-        'data' : "Its Functioned",
+        'description' : "File sudah diproses",
+        'result' : parsed
     }
+        
 
     response_data = jsonify(json_response)
     return response_data
+
+
+
+    
+
 
 #File LSTM
 @swag_from("docs/file_Upload.yml", methods = ['POST'])
 @app.route("/lstm_file", methods=["POST"])
 def lstm_file():
-    file = request.files['file'] #the Function is not designet yet
+    file = request.files['file'] 
 
-    
+    if file and allowed_file(file.filename):
+
+        # <<making new file from inputted file>>
+        filename = secure_filename(file.filename)
+        time_stamp = (datetime.now().strftime('%d-%m-%Y_%H%M%S'))
+
+        new_filename = f'{filename.split(".")[0]}_{time_stamp}.csv'
+        
+        # <<saving new inputted file>>
+        save_location = os.path.join('API/input', new_filename)
+        file.save(save_location)
+        filepath = 'API/input/' + str(new_filename)
+
+
+        # <<reading csv file>>
+        data = pd.read_csv(filepath, encoding='latin-1')
+
+        first_column_pre_process = data.iloc[:, 1]
+
+        #<<Start of Loading LSTM Model>>
+        file = open("API/resources_of_lstm/x_pad_sequences.pickle",'rb')
+        feature_file_from_lstm = pickle.load(file)
+        file.close()
+
+        model_file_from_lstm = load_model('API/resources_of_lstm/model.h5')
+        #<<End of Loading LSTM Model>>
+
+        # <<processing text>>
+        sentiment_result = []
+
+        for text in first_column_pre_process:
+            #Cleaning inputted text
+            file_clean = [process_text(text)]
+
+        
+            #Feature extraction
+            feature = tokenizer.texts_to_sequences(file_clean)
+            feature = pad_sequences(feature, maxlen=feature_file_from_lstm.shape[1])
+
+            #predicting
+            prediction = model_file_from_lstm.predict(feature)
+            get_sentiment = sentiment[np.argmax(prediction[0])]
+
+            sentiment_result.append(get_sentiment)
+
+
+        new_data_frame = pd.DataFrame(
+                {'text': first_column_pre_process,
+                'Sentiment': sentiment_result,
+                })
+
+        outputfilepath = f'API/output/{new_filename}'
+        new_data_frame.to_csv(outputfilepath)
+
+        
+        result = new_data_frame.to_json(orient="index")
+        parsed = json.loads(result)
+        json.dumps(parsed) 
+
+
     json_response = {
         'status_code' : 200,
-        'description' : "File yang sudah diproses",
-        'data' : "Its Functioned",
+        'description' : "File sudah diproses",
+        'result' : parsed
     }
 
     response_data = jsonify(json_response)
     return response_data
 
 
-# # Error Handling
-# @app.errorhandler(400)
-# def handle_400_error(_error):
-#     "Return a http 400 error to client"
-#     return make_response(jsonify({'error': 'Misunderstood'}), 400)
 
 
-# @app.errorhandler(401)
-# def handle_401_error(_error):
-#     "Return a http 401 error to client"
-#     return make_response(jsonify({'error': 'Unauthorised'}), 401)
+# Error Handling
+@app.errorhandler(400)
+def handle_400_error(_error):
+    "Return a http 400 error to client"
+    return make_response(jsonify({'error': 'Misunderstood'}), 400)
 
 
-# @app.errorhandler(404)
-# def handle_404_error(_error):
-#     "Return a http 404 error to client"
-#     return make_response(jsonify({'error': 'Not found'}), 404)
+@app.errorhandler(401)
+def handle_401_error(_error):
+    "Return a http 401 error to client"
+    return make_response(jsonify({'error': 'Unauthorised'}), 401)
 
 
-# @app.errorhandler(500)
-# def handle_500_error(_error):
-#     "Return a http 500 error to client"
-#     return make_response(jsonify({'error': 'Server error'}), 500)
+@app.errorhandler(404)
+def handle_404_error(_error):
+    "Return a http 404 error to client"
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
+@app.errorhandler(500)
+def handle_500_error(_error):
+    "Return a http 500 error to client"
+    return make_response(jsonify({'error': 'Server error'}), 500)
 
 
 

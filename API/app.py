@@ -196,17 +196,26 @@ def neural_network_file():
             sentiment_result.append(get_sentiment)
     
             
-        
-        new_data_frame = pd.DataFrame(sentiment_result, columns= ['Sentiment'])
+        new_data_frame = pd.DataFrame(
+                {'text': first_column_pre_process,
+                'Sentiment': sentiment_result,
+                })
+                
         outputfilepath = f'API/output/{new_filename}'
         new_data_frame.to_csv(outputfilepath)
+
+        import json
+        result = new_data_frame.to_json(orient="index")
+        parsed = json.loads(result)
+        json.dumps(parsed) 
 
 
     json_response = {
         'status_code' : 200,
-        'description' : "File yang sudah diproses",
-        'data' : "Its Functioned",
+        'description' : "File sudah diproses",
+        'result' : parsed
     }
+        
 
     response_data = jsonify(json_response)
     return response_data

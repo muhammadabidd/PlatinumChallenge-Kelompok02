@@ -16,7 +16,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from Data_Cleansing import process_text
 from Data_Cleansing import preprocess
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, make_response, render_template, request
 from flasgger import Swagger, LazyString, LazyJSONEncoder, swag_from
 # from flasgger import make_response
 
@@ -301,29 +301,31 @@ def lstm_file():
     return response_data
 
 
-# # Error Handling
-# @app.errorhandler(400)
-# def handle_400_error(_error):
-#     "Return a http 400 error to client"
-#     return make_response(jsonify({'error': 'Misunderstood'}), 400)
 
 
-# @app.errorhandler(401)
-# def handle_401_error(_error):
-#     "Return a http 401 error to client"
-#     return make_response(jsonify({'error': 'Unauthorised'}), 401)
+# Error Handling
+@app.errorhandler(400)
+def handle_400_error(_error):
+    "Return a http 400 error to client"
+    return make_response(jsonify({'error': 'Misunderstood'}), 400)
 
 
-# @app.errorhandler(404)
-# def handle_404_error(_error):
-#     "Return a http 404 error to client"
-#     return make_response(jsonify({'error': 'Not found'}), 404)
+@app.errorhandler(401)
+def handle_401_error(_error):
+    "Return a http 401 error to client"
+    return make_response(jsonify({'error': 'Unauthorised'}), 401)
 
 
-# @app.errorhandler(500)
-# def handle_500_error(_error):
-#     "Return a http 500 error to client"
-#     return make_response(jsonify({'error': 'Server error'}), 500)
+@app.errorhandler(404)
+def handle_404_error(_error):
+    "Return a http 404 error to client"
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
+@app.errorhandler(500)
+def handle_500_error(_error):
+    "Return a http 500 error to client"
+    return make_response(jsonify({'error': 'Server error'}), 500)
 
 
 

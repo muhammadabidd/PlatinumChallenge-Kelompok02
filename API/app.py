@@ -5,6 +5,9 @@ from keras.preprocessing.text import Tokenizer
 from keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
+# from NeuralNetwork import get_centiment_nn
+
+
 import pandas as pd
 import numpy as np
 import os
@@ -69,23 +72,27 @@ sentiment = ['negative', 'neutral', 'positive']
 @app.route('/neural_network_text', methods=['POST'])
 def neural_network_text():
 
-    # <<Start of Making NN Model>>
-    file = open("API/resources_of_nn/feature.p",'rb')
-    feature_file_from_nn = pickle.load(file)
+
+    #Import model
+    file = open("API/resources_of_nn_countvectorizer/model_countvectorizer_nn.pickle",'rb')
+    model = pickle.load(file)
     file.close()
 
-    model_file_from_nn = load_model('API/model_of_nn/model.h5')
-    # <<End of Loading NN Model>>
+    #Import Feature
+    file = open("API/resources_of_nn_countvectorizer/feature_countvectorizer_nn.pickle",'rb')
+    feature = pickle.load(file)
+    file.close()
+
+    def get_centiment_nn(original_text):
+        text = feature.transform([process_text(original_text)])
+        result = model.predict(text)[0]
+        return result
 
     original_text = request.form.get('text')
+    get_sentiment = get_centiment_nn(original_text)
+   
 
-    text = process_text(original_text)
 
-    feature = tokenizer.texts_to_sequences(text)
-    feature = pad_sequences(feature, maxlen=feature_file_from_nn.shape[1])
-
-    prediction = model_file_from_nn.predict(feature)
-    get_sentiment = sentiment[np.argmax(prediction[0])]
 
 
     json_response = {

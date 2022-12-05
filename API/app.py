@@ -7,7 +7,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # from NeuralNetwork import get_centiment_nn
 
-
+import json
 import pandas as pd
 import numpy as np
 import os
@@ -179,7 +179,7 @@ def neural_network_file():
 
         # Processing text
         def get_centiment_nn(original_text):
-            text = feature.transform([process_text(original_text)]) # ada masalah saat bersihin filenya
+            text = feature.transform([process_text(original_text)]) 
             result = model.predict(text)[0]
             return str(result)
 
@@ -204,7 +204,7 @@ def neural_network_file():
         outputfilepath = f'API/output/{new_filename}'
         new_data_frame.to_csv(outputfilepath)
 
-        import json
+        
         result = new_data_frame.to_json(orient="index")
         parsed = json.loads(result)
         json.dumps(parsed) 
@@ -277,15 +277,24 @@ def lstm_file():
             sentiment_result.append(get_sentiment)
 
 
-        new_data_frame = pd.DataFrame(sentiment_result, columns= ['Sentiment'])
+        new_data_frame = pd.DataFrame(
+                {'text': first_column_pre_process,
+                'Sentiment': sentiment_result,
+                })
+
         outputfilepath = f'API/output/{new_filename}'
         new_data_frame.to_csv(outputfilepath)
+
+        
+        result = new_data_frame.to_json(orient="index")
+        parsed = json.loads(result)
+        json.dumps(parsed) 
 
 
     json_response = {
         'status_code' : 200,
-        'description' : "File yang sudah diproses",
-        'data' : "open this link to download : http://127.0.0.1:5000/download",
+        'description' : "File sudah diproses",
+        'result' : parsed
     }
 
     response_data = jsonify(json_response)
